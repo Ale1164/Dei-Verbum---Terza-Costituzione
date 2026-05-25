@@ -1,0 +1,246 @@
+@charset "utf-8";
+
+/* --- VARIABILI COLORE --- */
+:root {
+    --bg-crema: #f5ece1;       
+    --copertina-rossa: #9c1c1c; 
+    --pagina-giallina: #fffdf6; 
+    --testo-colore: #2b2b2b;    
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-crema);
+    font-family: 'Georgia', serif; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+/* --- COPERTINA ESTERNA --- */
+.book-cover {
+    background-color: var(--copertina-rossa);
+    padding: 20px; 
+    border-radius: 12px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), inset 0 0 25px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- GRANDEZZA LIBRO PC --- */
+.book {
+    position: relative;
+    width: 1100px;  
+    height: 650px;  
+    perspective: 2000px; 
+}
+
+/* Linea della rilegatura centrale */
+.book::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 100;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+/* --- STRUTTURA FOGLI MOBILI --- */
+.paper {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pagina-giallina);
+    padding: 0; 
+    overflow: hidden; 
+    backface-visibility: hidden; 
+    -webkit-backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.front {
+    transform: rotateY(0deg);
+    border-radius: 0 6px 6px 0;
+    box-shadow: inset 25px 0 30px rgba(0, 0, 0, 0.05), 3px 0 5px rgba(0,0,0,0.05);
+}
+
+.back {
+    transform: rotateY(180deg);
+    border-radius: 6px 0 0 6px;
+    box-shadow: inset -25px 0 30px rgba(0, 0, 0, 0.05), -3px 0 5px rgba(0,0,0,0.05);
+}
+
+/* --- PAGINE DI FONDO FISSE (FIXATO Z-INDEX BASSO) --- */
+.static-page {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    background-color: var(--pagina-giallina);
+    padding: 0;
+    overflow: hidden;
+    z-index: 0; /* Rimangono SEMPRE sotto lo strato dei fogli mobili */
+}
+.static-left {
+    left: 0;
+    border-radius: 6px 0 0 6px;
+    box-shadow: inset -25px 0 30px rgba(0, 0, 0, 0.05);
+}
+.static-right {
+    right: 0;
+    border-radius: 0 6px 6px 0;
+    box-shadow: inset 25px 0 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Rotazione 3D */
+.paper.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Gestione stratificazione fogli (Z-INDEX) */
+#p1 { z-index: 6; }
+#p2 { z-index: 5; }
+#p3 { z-index: 4; }
+#p4 { z-index: 3; }
+#p5 { z-index: 2; }
+#p6 { z-index: 1; }
+
+#p1.flipped { z-index: 1; }
+#p2.flipped { z-index: 2; }
+#p3.flipped { z-index: 3; }
+#p4.flipped { z-index: 4; }
+#p5.flipped { z-index: 5; }
+#p6.flipped { z-index: 6; }
+
+/* --- STRUTTURA CONTENUTI --- */
+.page-content {
+    color: var(--testo-colore);
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* --- STILE PER GLI ELENCHI PUNTATI --- */
+.page-body ul {
+    margin-bottom: 15px;
+    padding-left: 25px; /* Crea lo spazio corretto per i pallini senza far uscire il testo */
+}
+
+.page-body li {
+    font-size: 1.1rem;      /* Stessa dimensione del testo nei paragrafi */
+    text-align: justify;    /* Stesso allineamento giustificato */
+    margin-bottom: 8px;     /* Spazio tra un punto elenco e l'altro */
+    color: var(--testo-colore); /* Stesso colore grigio scuro */
+}
+
+/* TESTATA TOTALMENTE FISSA */
+.page-header {
+    background-color: var(--pagina-giallina);
+    padding: 45px 45px 10px 45px;
+    position: relative;
+    z-index: 5;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 8px;
+}
+
+/* CORPO SCROLLABILE DEL TESTO */
+.page-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 45px 45px 45px;
+}
+
+.page-body p {
+    margin-bottom: 0px;
+    text-align: justify;
+    font-size: 1.1rem;
+}
+
+/* --- IMMAGINI CON DISSOLVENZA TIMED VIA JS --- */
+.page-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out; 
+    pointer-events: none;
+}
+
+.page-body img.show-img {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Le immagini sulle pagine fisse non sfumano */
+.static-page .page-body img {
+    opacity: 1;
+}
+
+/* --- BOTTONI INTERFACCIA --- */
+.controls {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+.btn {
+    background-color: var(--copertina-rossa);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.05rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn:hover {
+    background-color: #bd2424;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+
+.no-scroll {
+    overflow-y: hidden !important; 
+}
